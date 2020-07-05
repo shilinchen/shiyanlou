@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 
 import curses
 from random import randrange, choice  # generate and place new tile
@@ -15,7 +15,7 @@ actions_dict = dict(zip(letter_codes, actions * 2))
 def get_user_action(keyboard):
     char = 'N'
     while char not in actions_dict:
-        # \u8fd4\u56de\u6309\u4e0b\u952e\u7684 ascii \u7801\u503c
+        # 返回按下键的 ascii 码值
         char = keyboard.getch()
 
     return actions_dict[char]
@@ -166,25 +166,25 @@ class GameField(object):
 
 def main(stdscr):
     def init():
-        # \u91cd\u7f6e\u6e38\u620f\u68cb\u76d8
+        # 重置游戏棋盘
         game_field.reset()
         return 'Game'
 
     def not_game(state):
-        # \u753b\u51fa GameOver \u6216\u8005 Win \u7684\u754c\u9762
-        # \u600e\u4e48\u753b\u51fa\u7684
+        # 画出 GameOver 或者 Win 的界面
+        # 怎么画出的
         game_field.draw(stdscr)
-        # \u8bfb\u53d6\u7528\u6237\u8f93\u5165\u5f97\u5230action\uff0c\u5224\u65ad\u662f\u91cd\u542f\u6e38\u620f\u8fd8\u662f\u7ed3\u675f\u6e38\u620f
+        # 读取用户输入得到action，判断是重启游戏还是结束游戏
         #
         action = get_user_action(stdscr)
-        responses = defaultdict(lambda: state)  # \u9ed8\u8ba4\u662f\u5f53\u524d\u72b6\u6001\uff0c\u6ca1\u6709\u884c\u4e3a\u5c31\u4f1a\u4e00\u76f4\u5728\u5f53\u524d\u754c\u9762\u5faa\u73af
-        responses['Restart'], responses['Exit'] = 'Init', 'Exit'  # \u5bf9\u5e94\u4e0d\u540c\u7684\u884c\u4e3a\u8f6c\u6362\u5230\u4e0d\u540c\u7684\u72b6\u6001
+        responses = defaultdict(lambda: state)  # 默认是当前状态，没有行为就会一直在当前界面循环
+        responses['Restart'], responses['Exit'] = 'Init', 'Exit'  # 对应不同的行为转换到不同的状态
         return responses[action]
 
     def game():
-        # \u753b\u51fa\u5f53\u524d\u68cb\u76d8\u72b6\u6001
+        # 画出当前棋盘状态
         game_field.draw(stdscr)
-        # \u8bfb\u53d6\u7528\u6237\u8f93\u5165\u5f97\u5230action
+        # 读取用户输入得到action
         action = get_user_action(stdscr)
 
         if action == 'Restart':
@@ -207,12 +207,12 @@ def main(stdscr):
 
     curses.use_default_colors()
 
-    # \u8bbe\u7f6e\u7ec8\u7ed3\u72b6\u6001\u6700\u5927\u6570\u503c\u4e3a 32
+    # 设置终结状态最大数值为 32
     game_field = GameField(win=32)
 
     state = 'Init'
 
-    # \u72b6\u6001\u673a\u5f00\u59cb\u5faa\u73af
+    # 状态机开始循环
     while state != 'Exit':
         state = state_actions[state]()
 
